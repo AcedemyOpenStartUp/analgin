@@ -1,12 +1,12 @@
 from analgin.amqp.publisher.abc import Publisher
-from aio_pika.abc import AbstractChannel, AbstractConnection
+from aio_pika.abc import AbstractExchange, AbstractConnection
 from aio_pika import Message
 
 
 class PublisherBase(Publisher):
-    def __init__(self, conn: AbstractChannel, channel: AbstractChannel):
+    def __init__(self, conn: AbstractConnection, exchange: AbstractExchange):
         self._conn = conn
-        self._channel = channel
+        self._exchange = exchange
 
     async def publish(
         self,
@@ -16,4 +16,4 @@ class PublisherBase(Publisher):
         content_type: str = "application/json",
     ):
         message = Message(body=message, headers=headers, content_type=content_type)
-        await self._channel.default_exchange.publish(message, routing_key=routing_key)
+        await self._exchange.publish(message, routing_key=routing_key)
